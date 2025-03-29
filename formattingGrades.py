@@ -28,9 +28,36 @@ for row in currSheet.iter_rows(min_row = 2, values_only=True) :
     class_name = row[0]
     class_names.add(class_name)
 
+#manking a class names list
+classNamesList = []
 # Create a worksheet for each unique class
 for class_name in class_names :
-    formattedWorkbook.create_sheet(title=class_name)
+    sheet = formattedWorkbook.create_sheet(title=class_name)
+    #adding the headers to the worksheet
+    sheet["A1"] = "Last Name"
+    sheet["B1"] = "First Name"
+    sheet["C1"] = "Student ID"
+    sheet["D1"] = "Grade"
+    #adding the class name to the class name list
+    classNamesList.append(class_name)
+
+
+#adding data to each sheet
+#going through each class in the class list
+for sClass in classNamesList :
+    #setting the class sheet as
+    sheet = formattedWorkbook[sClass]
+    #going through each row in the bad data set
+    for row in currSheet.iter_rows(min_row = 2, min_col = 1, max_row = currSheet.max_row, max_col = 3) :
+        #checking to see if the class matches
+        if (row[0].value == sClass) :
+            #creating and infor list to store the data
+            infoList = row[1].value.split("_")
+            infoList.append(row[2].value)
+
+            #adding the data to a new row in the class worksheet
+            sheet.append(infoList)
+
 
 # Save the workbook and close it
 formattedWorkbook.save(filename = 'formatted_grades.xlsx')
