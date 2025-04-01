@@ -6,6 +6,7 @@
 import openpyxl
 from openpyxl import Workbook
 from openpyxl.styles import Font
+import statistics
 
 # Load the Excel workbook
 myWorkbook = openpyxl.load_workbook('Poorly_Organized_Data_1.xlsx')
@@ -58,6 +59,35 @@ for sClass in classNamesList :
             #adding the data to a new row in the class worksheet
             sheet.append(infoList)
 
+# Adding summary information to each class sheet
+for sClass in classNamesList:
+    sheet = formattedWorkbook[sClass]
+    
+    # Collect all grades (column D) as integers
+    grades = [row[3].value for row in sheet.iter_rows(min_row=2, min_col=4, max_col=4, values_only=True) if isinstance(row[0], (int, float))]
+
+    if grades:
+        highest_grade = max(grades)
+        lowest_grade = min(grades)
+        mean_grade = sum(grades) / len(grades)
+        median_grade = statistics.median(grades)
+        student_count = len(grades)
+
+        # Writing the summary information
+        sheet["F1"] = "Summary"
+        sheet["F2"] = "Highest Grade"
+        sheet["G2"] = highest_grade
+        sheet["F3"] = "Lowest Grade"
+        sheet["G3"] = lowest_grade
+        sheet["F4"] = "Mean Grade"
+        sheet["G4"] = mean_grade
+        sheet["F5"] = "Median Grade"
+        sheet["G5"] = median_grade
+        sheet["F6"] = "Number of Students"
+        sheet["G6"] = student_count
+
+# Save the updated workbook
+formattedWorkbook.save(filename='formatted_grades.xlsx')
 
 # Save the workbook and close it
 formattedWorkbook.save(filename = 'formatted_grades.xlsx')
