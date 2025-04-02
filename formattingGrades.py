@@ -64,7 +64,11 @@ for sClass in classNamesList:
     sheet = formattedWorkbook[sClass]
     
     # Collect all grades (column D) as integers
-    grades = [row[3].value for row in sheet.iter_rows(min_row=2, min_col=4, max_col=4, values_only=True) if isinstance(row[0], (int, float))]
+    grades = [row[0] for row in sheet.iter_rows(min_row=2, min_col=4, max_col=4, values_only=True) if isinstance(row[0], (int, float))]
+
+    # Organize header cells and columns into tuples to iterate
+    tHeaders = ('A1', 'B1', 'C1', 'D1', 'F1', 'G1')
+    tColumns = ('A', 'B', 'C', 'D', 'F', 'G')
 
     if grades:
         highest_grade = max(grades)
@@ -86,9 +90,15 @@ for sClass in classNamesList:
         sheet["F6"] = "Number of Students"
         sheet["G6"] = student_count
 
-# Save the updated workbook
-formattedWorkbook.save(filename='formatted_grades.xlsx')
+    # Set header fonts to bold and resize columns
+    for sHeader, sColumn in zip(tHeaders, tColumns):
+        sheet[sHeader].font = Font(bold= True)
 
+        if sheet[sHeader].value:
+            sheet.column_dimensions[sColumn].width = len(sheet[sHeader].value) + 5
+        else:
+            sheet.column_dimensions[sColumn].width = 10
+        
 # Save the workbook and close it
 formattedWorkbook.save(filename = 'formatted_grades.xlsx')
 formattedWorkbook.close()
