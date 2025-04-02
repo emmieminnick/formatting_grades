@@ -59,6 +59,12 @@ for sClass in classNamesList :
             #adding the data to a new row in the class worksheet
             sheet.append(infoList)
 
+# loop through each sheet 
+for sheet_name in formattedWorkbook.sheetnames:
+    currSheet = formattedWorkbook[sheet_name]
+    # add a filter to each sheet
+    currSheet.auto_filter.ref = f"A1:{openpyxl.utils.get_column_letter(currSheet.max_column)}{currSheet.max_row}"
+
 # Adding summary information to each class sheet
 for sClass in classNamesList:
     sheet = formattedWorkbook[sClass]
